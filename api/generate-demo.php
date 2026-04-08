@@ -1,0 +1,270 @@
+<?php
+/**
+ * generate-demo.php
+ * ヒアリングデータからデモ用トップページを自動生成するAPI
+ *
+ * リクエスト: POST /api/generate-demo.php
+ * パラメータ: hearing_id (int)
+ * レスポンス: JSON { success, url, company_name, error }
+ */
+
+// ─────────────────────────────────────────────
+// 定数
+// ─────────────────────────────────────────────
+define('DB_HOST',          'mysql320.phy.lolipop.lan');
+define('DB_NAME',          'LAA1380072-udswebgen');
+define('DB_USER',          'LAA1380072');
+define('DB_PASS',          '');  // 要設定
+
+define('ANTHROPIC_API_KEY', '');  // 要設定
+define('CLAUDE_MODEL',      'claude-sonnet-4-5');
+define('CLAUDE_MAX_TOKENS', 8000);
+
+define('NOTIFY_EMAIL',     'zumy8818@gmail.com');
+define('DEMO_BASE_PATH',   '/home/hippy.jp-scarecrowman8818/ubuyama-digital-service.com/demo');
+define('DEMO_BASE_URL',    'https://ubuyama-digital-service.com/demo');
+
+// ─────────────────────────────────────────────
+// メイン処理
+// ─────────────────────────────────────────────
+header('Content-Type: application/json; charset=utf-8');
+
+try {
+    // 1. POSTパラメータの検証
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('POSTリクエストのみ受け付けます', 405);
+    }
+
+    $hearing_id = filter_input(INPUT_POST, 'hearing_id', FILTER_VALIDATE_INT);
+    if (!$hearing_id || $hearing_id <= 0) {
+        throw new Exception('hearing_id が不正です', 400);
+    }
+
+    // 2. DBからヒアリングデータを取得
+    $hearing = fetchHearingData($hearing_id);
+
+    // 3. Claude APIでTopページHTML生成
+    $html = generateTopPageHTML($hearing);
+
+    // 4. HTMLファイルを保存
+    $slug = makeSlug($hearing['company_name']);
+    $url  = saveHTML($slug, $html);
+
+    // 5. メール通知
+    sendNotification($hearing['company_name'], $url);
+
+    // 6. URLをJSONで返す
+    echo json_encode([
+        'success'      => true,
+        'url'          => $url,
+        'company_name' => $hearing['company_name'],
+    ], JSON_UNESCAPED_UNICODE);
+
+} catch (Exception $e) {
+    $status = $e->getCode() >= 400 ? $e->getCode() : 500;
+    http_response_code($status);
+    echo json_encode([
+        'success' => false,
+        'error'   => $e->getMessage(),
+    ], JSON_UNESCAPED_UNICODE);
+}
+
+// ─────────────────────────────────────────────
+// DBからヒアリングデータ取得
+// ─────────────────────────────────────────────
+function fetchHearingData(int $hearing_id): array
+{
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+
+    $stmt = $pdo->prepare('SELECT * FROM hearings WHERE id = ? LIMIT 1');
+    $stmt->execute([$hearing_id]);
+    $row = $stmt->fetch();
+
+    if (!$row) {
+        throw new Exception("hearing_id={$hearing_id} のデータが見つかりません", 404);
+    }
+
+    // hearing_data カラムにJSONが入っている想定
+    $data = json_decode($row['hearing_data'], true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('ヒアリングデータのJSON解析に失敗しました');
+    }
+
+    return $data;
+}
+
+// ─────────────────────────────────────────────
+// Claude APIでTopページHTML生成
+// ─────────────────────────────────────────────
+function generateTopPageHTML(array $data): string
+{
+    if (empty(ANTHROPIC_API_KEY)) {
+        throw new Exception('ANTHROPIC_API_KEY が設定されていません');
+    }
+
+    $prompt = buildPrompt($data);
+
+    $body = json_encode([
+        'model'      => CLAUDE_MODEL,
+        'max_tokens' => CLAUDE_MAX_TOKENS,
+        'messages'   => [
+            ['role' => 'user', 'content' => $prompt],
+        ],
+    ], JSON_UNESCAPED_UNICODE);
+
+    $ch = curl_init('https://api.anthropic.com/v1/messages');
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $body,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 120,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'x-api-key: ' . ANTHROPIC_API_KEY,
+            'anthropic-version: 2023-06-01',
+        ],
+    ]);
+
+    $response = curl_exec($ch);
+    $curl_err  = curl_error($ch);
+    curl_close($ch);
+
+    if ($response === false) {
+        throw new Exception('Claude API通信エラー: ' . $curl_err);
+    }
+
+    $parsed = json_decode($response, true);
+    if (!empty($parsed['error'])) {
+        throw new Exception('Claude APIエラー: ' . $parsed['error']['message']);
+    }
+
+    $raw_text = $parsed['content'][0]['text'] ?? '';
+
+    // ```html ... ``` ブロックを抽出
+    if (preg_match('/```html\s*([\s\S]*?)```/i', $raw_text, $m)) {
+        return trim($m[1]);
+    }
+    // <!DOCTYPE html> ... </html> を直接抽出
+    if (preg_match('/(<!DOCTYPE[\s\S]*?<\/html>)/i', $raw_text, $m)) {
+        return trim($m[1]);
+    }
+
+    return trim($raw_text);
+}
+
+// ─────────────────────────────────────────────
+// プロンプト構築
+// ─────────────────────────────────────────────
+function buildPrompt(array $data): string
+{
+    $company  = $data['company']  ?? [];
+    $brand    = $data['brand']    ?? [];
+    $services = $data['services'] ?? [];
+    $strengths = $data['strengths'] ?? [];
+    $keywords = implode('・', $brand['keywords'] ?? []);
+
+    $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+    return <<<PROMPT
+あなたはプロのWebデザイナーです。
+以下のヒアリングデータをもとに、見込み客に見せる「デモ用トップページ」のHTMLを1ファイルで作成してください。
+
+## ヒアリングデータ
+{$json}
+
+## 作成要件
+
+### デザイン要件
+- モダンで洗練されたデザイン（2024年のトレンドを意識）
+- スマートフォン対応（レスポンシブデザイン）
+- プライマリカラー: {$brand['color_primary']}
+- セカンダリカラー: {$brand['color_secondary']}
+- サイトスタイル: {$brand['site_style']}
+
+### 構成セクション（この順番で）
+1. ヘッダー - ロゴ（社名テキスト）、ナビゲーション
+2. ヒーローセクション - 大きなキャッチコピー、サブコピー、CTAボタン
+3. 強みセクション - 3つの強みをカード形式で
+4. サービスセクション - サービス一覧
+5. 会社概要セクション - 設立年、従業員数、所在地など
+6. CTAセクション - お問い合わせへの誘導
+7. フッター - 連絡先情報
+
+### 技術要件
+- 外部CSSフレームワーク不使用（純粋なHTML/CSS/JSのみ）
+- Google Fonts（Noto Sans JPなど）使用可
+- アニメーション効果を適度に使用（スクロールフェードインなど）
+- 画像はUnsplash APIのURL形式で実際に表示できるものを使用
+
+### コピーライティング
+- キャッチコピー: 会社の特徴と強みを活かした魅力的なもの
+- 各セクションの文章は実際のビジネスに即した具体的な内容
+- キーワード「{$keywords}」を自然に盛り込む
+
+### 重要
+- コードは完全に動作するものを出力
+- ```html で始まり ``` で終わるコードブロック形式で出力
+- <!DOCTYPE html> から </html> まで完全なHTMLファイル
+PROMPT;
+}
+
+// ─────────────────────────────────────────────
+// HTMLファイルを保存
+// ─────────────────────────────────────────────
+function saveHTML(string $slug, string $html): string
+{
+    $dir = DEMO_BASE_PATH . '/' . $slug;
+    if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
+        throw new Exception("ディレクトリの作成に失敗しました: {$dir}");
+    }
+
+    $path = $dir . '/index.html';
+    if (file_put_contents($path, $html) === false) {
+        throw new Exception("HTMLファイルの保存に失敗しました: {$path}");
+    }
+
+    return DEMO_BASE_URL . '/' . $slug . '/index.html';
+}
+
+// ─────────────────────────────────────────────
+// 会社名 → URLスラグ変換
+// ─────────────────────────────────────────────
+function makeSlug(string $company_name): string
+{
+    // 日本語・記号を除去し、英数字とハイフンのみに正規化
+    $slug = preg_replace('/[^\w\-]/u', '-', $company_name);
+    $slug = preg_replace('/-+/', '-', $slug);
+    $slug = trim($slug, '-');
+    $slug = strtolower($slug);
+
+    // 空になった場合はタイムスタンプで代替
+    return $slug ?: 'company-' . time();
+}
+
+// ─────────────────────────────────────────────
+// メール通知
+// ─────────────────────────────────────────────
+function sendNotification(string $company_name, string $url): void
+{
+    $to      = NOTIFY_EMAIL;
+    $subject = '=?UTF-8?B?' . base64_encode("[UDS] デモサイト生成完了: {$company_name}") . '?=';
+    $body    = <<<BODY
+デモサイトの生成が完了しました。
+
+会社名: {$company_name}
+URL: {$url}
+
+このメールは自動送信です。
+BODY;
+
+    $headers = implode("\r\n", [
+        'From: noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'),
+        'Content-Type: text/plain; charset=UTF-8',
+    ]);
+
+    mail($to, $subject, $body, $headers);
+}
