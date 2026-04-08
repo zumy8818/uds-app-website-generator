@@ -42,6 +42,9 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
     } catch (Exception $e) {
         $status = $e->getCode() >= 400 ? $e->getCode() : 500;
         http_response_code($status);
+        $code   = is_numeric($e->getCode()) ? (int)$e->getCode() : 0;
+        $status = ($code >= 400 && $code < 600) ? $code : 500;
+        http_response_code($status);
         echo json_encode([
             'success' => false,
             'error'   => $e->getMessage(),
@@ -78,7 +81,7 @@ function fetchHearingData(int $hearing_id): array
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 
-    $stmt = $pdo->prepare('SELECT * FROM hearings WHERE id = ? LIMIT 1');
+    $stmt = $pdo->prepare('SELECT * FROM hearing_data WHERE id = ? LIMIT 1');
     $stmt->execute([$hearing_id]);
     $row = $stmt->fetch();
 

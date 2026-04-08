@@ -70,7 +70,8 @@ try {
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Exception $e) {
-    $status = $e->getCode() >= 400 ? $e->getCode() : 500;
+    $code   = is_numeric($e->getCode()) ? (int)$e->getCode() : 0;
+    $status = ($code >= 400 && $code < 600) ? $code : 500;
     http_response_code($status);
     echo json_encode([
         'success' => false,
@@ -90,7 +91,7 @@ function saveHearing(string $hearing_data_json): int
     ]);
 
     $stmt = $pdo->prepare(
-        'INSERT INTO hearings (hearing_data, created_at) VALUES (?, NOW())'
+        'INSERT INTO hearing_data (hearing_data, created_at) VALUES (?, NOW())'
     );
     $stmt->execute([$hearing_data_json]);
 
