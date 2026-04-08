@@ -1,0 +1,827 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>サービス紹介 | 株式会社サンプル商事</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #2C5F8A;
+      --color-secondary: #F0A500;
+      --color-accent: #E8F4FD;
+      --color-white: #FFFFFF;
+      --color-gray-light: #F5F5F5;
+      --color-gray: #666666;
+      --color-dark: #333333;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      line-height: 1.8;
+      color: var(--color-dark);
+    }
+
+    /* ナビゲーション */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background: var(--color-white);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--color-dark);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--color-primary);
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .menu-toggle span {
+      width: 25px;
+      height: 3px;
+      background: var(--color-primary);
+      transition: 0.3s;
+    }
+
+    /* ページヘッダー */
+    .page-header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #1a4060 100%);
+      color: var(--color-white);
+      padding: 5rem 5%;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .page-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .breadcrumb a {
+      color: var(--color-white);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    /* セクション共通 */
+    section {
+      padding: 5rem 5%;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 2rem;
+      color: var(--color-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title p {
+      color: var(--color-gray);
+    }
+
+    /* サービス概要 */
+    .service-overview {
+      background: var(--color-accent);
+    }
+
+    .overview-content {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .overview-content p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .overview-features {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .feature-badge {
+      background: var(--color-white);
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-weight: 500;
+      color: var(--color-primary);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* サービス詳細 */
+    .service-details {
+      background: var(--color-white);
+    }
+
+    .service-card {
+      max-width: 1000px;
+      margin: 0 auto 4rem;
+      background: var(--color-white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .service-card-header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .service-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--color-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .service-card-header h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .service-card-header p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .service-card-body {
+      padding: 2rem;
+    }
+
+    .service-description {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .service-section h4 {
+      color: var(--color-primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--color-secondary);
+      display: inline-block;
+    }
+
+    .service-section ul {
+      list-style: none;
+    }
+
+    .service-section li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .service-section li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--color-secondary);
+      font-weight: bold;
+    }
+
+    .price-tag {
+      background: var(--color-accent);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .price-tag .price {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .price-tag .note {
+      font-size: 0.85rem;
+      color: var(--color-gray);
+    }
+
+    /* 流れ */
+    .flow-list {
+      counter-reset: flow;
+    }
+
+    .flow-list li {
+      padding-left: 2.5rem;
+    }
+
+    .flow-list li::before {
+      content: counter(flow);
+      counter-increment: flow;
+      position: absolute;
+      left: 0;
+      width: 24px;
+      height: 24px;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* FAQ */
+    .faq-section {
+      background: var(--color-gray-light);
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: var(--color-white);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 1.5rem;
+      background: var(--color-white);
+      border: none;
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: inherit;
+      color: var(--color-dark);
+      transition: background 0.3s;
+    }
+
+    .faq-question:hover {
+      background: var(--color-accent);
+    }
+
+    .faq-question::before {
+      content: "Q.";
+      color: var(--color-primary);
+      font-weight: 700;
+      margin-right: 1rem;
+    }
+
+    .faq-question span {
+      flex: 1;
+    }
+
+    .faq-toggle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-toggle {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 300px;
+    }
+
+    .faq-answer-inner {
+      padding: 0 1.5rem 1.5rem;
+      padding-left: 3rem;
+      color: var(--color-gray);
+      line-height: 1.8;
+    }
+
+    .faq-answer-inner::before {
+      content: "A.";
+      color: var(--color-secondary);
+      font-weight: 700;
+      margin-right: 0.5rem;
+    }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #1a4060 100%);
+      color: var(--color-white);
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary {
+      background: var(--color-secondary);
+      color: var(--color-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--color-white);
+      border: 2px solid var(--color-white);
+    }
+
+    .cta-phone {
+      margin-top: 2rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .cta-phone span {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 0.5rem;
+    }
+
+    /* フッター */
+    footer {
+      background: var(--color-dark);
+      color: var(--color-white);
+      padding: 3rem 5%;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .footer-section h4 {
+      color: var(--color-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .footer-section p,
+    .footer-section a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-section a:hover {
+      color: var(--color-secondary);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--color-white);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-150%);
+        transition: transform 0.3s;
+      }
+
+      .nav-links.active {
+        transform: translateY(0);
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .service-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .service-card-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .overview-features {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ナビゲーション -->
+  <nav>
+    <div class="nav-logo">株式会社サンプル商事</div>
+    <button class="menu-toggle" aria-label="メニュー">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html">ホーム</a></li>
+      <li><a href="about.html">会社情報</a></li>
+      <li><a href="service.html" class="active">サービス</a></li>
+      <li><a href="works.html">実績</a></li>
+      <li><a href="contact.html">お問い合わせ</a></li>
+    </ul>
+  </nav>
+
+  <!-- ページヘッダー -->
+  <header class="page-header">
+    <h1>サービス紹介</h1>
+    <p>お客様の「理想の暮らし」を実現するため、不動産に関わるあらゆるニーズにお応えします</p>
+    <div class="breadcrumb">
+      <a href="index.html">ホーム</a> ＞ サービス紹介
+    </div>
+  </header>
+
+  <!-- サービス概要 -->
+  <section class="service-overview">
+    <div class="section-title">
+      <h2>私たちのサービス</h2>
+      <p>創業20年、500件以上の実績で培った経験をもとに</p>
+    </div>
+    <div class="overview-content">
+      <p>
+        株式会社サンプル商事は、熊本県内で地域密着型の不動産サービスを提供しています。<br>
+        物件の売買仲介から賃貸管理、リノベーション提案まで、不動産に関するあらゆるご相談に<br>
+        ワンストップでお応えいたします。
+      </p>
+      <div class="overview-features">
+        <span class="feature-badge">🏠 地域密着20年</span>
+        <span class="feature-badge">📋 取引実績500件以上</span>
+        <span class="feature-badge">👥 専門スタッフ12名</span>
+        <span class="feature-badge">🤝 丁寧なヒアリング</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- サービス詳細 -->
+  <section class="service-details">
+    <div class="section-title">
+      <h2>サービス詳細</h2>
+      <p>お客様のニーズに合わせた最適なプランをご提案します</p>
+    </div>
+
+    <!-- 売買仲介 -->
+    <article class="service-card">
+      <div class="service-card-header">
+        <div class="service-icon">🏡</div>
+        <div>
+          <h3>売買仲介</h3>
+          <p>物件探しから契約まで一貫サポート</p>
+        </div>
+      </div>
+      <div class="service-card-body">
+        <div class="service-description">
+          <p>
+            マイホームの購入や売却をお考えの方へ、経験豊富なスタッフが物件探しから契約、引き渡しまで一貫してサポートいたします。
+            熊本県内の地域情報に精通しており、お客様のライフスタイルに合った最適な物件をご提案します。
+            売却の場合は、適正価格での査定と効果的な販売活動で、スムーズな売却を実現します。
+          </p>
+        </div>
+        <div class="service-grid">
+          <div class="service-section">
+            <h4>サービスの特徴</h4>
+            <ul>
+              <li>地域相場を熟知した適正査定</li>
+              <li>豊富なネットワークで買主をマッチング</li>
+              <li>住宅ローンのご相談も対応</li>
+              <li>契約書類の作成サポート</li>
+              <li>引き渡し後のアフターフォロー</li>
+            </ul>
+          </div>
+          <div class="service-section">
+            <h4>ご利用の流れ</h4>
+            <ul class="flow-list">
+              <li>無料相談・ヒアリング</li>
+              <li>物件査定または物件探し</li>
+              <li>販売活動または内見</li>
+              <li>売買契約の締結</li>
+              <li>決済・引き渡し</li>
+            </ul>
+          </div>
+          <div class="service-section">
+            <h4>料金について</h4>
+            <div class="price-tag">
+              <p class="price">仲介手数料：売買価格の3%＋6万円（税別）</p>
+              <p class="note">※宅建業法に基づく上限額</p>
+              <p class="note">※ご相談・査定は無料です</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 賃貸管理 -->
+    <article class="service-card">
+      <div class="service-card-header">
+        <div class="service-icon">🔑</div>
+        <div>
+          <h3>賃貸管理</h3>
+          <p>オーナー様の資産を大切に管理</p>
+        </div>
+      </div>
+      <div class="service-card-body">
+        <div class="service-description">
+          <p>
+            賃貸物件のオーナー様へ、入居者募集から日常管理、退去時の対応まで、賃貸経営をトータルでサポートいたします。
+            空室リスクを最小限に抑え、安定した家賃収入を実現。オーナー様の大切な資産価値を維持・向上させます。
+            24時間対応の緊急連絡窓口も完備しており、入居者様にも安心をお届けします。
+          </p>
+        </div>
+        <div class="service-grid">
+          <div class="service-section">
+            <h4>サービスの特徴</h4>
+            <ul>
+              <li>入居者募集・審査代行</li>
+              <li>家賃集金・滞納対応</li>
+              <li>定期巡回・建物点検</li>
+              <li>クレーム・トラブル対応</li>
+              <li>退去時の原状回復手配</li>
+            </ul>
+          </div>
+          <div class="service-section">
+            <h4>管理開始の流れ</h4>
+            <ul class="flow-list">
+              <li>ご相談・物件確認</li>
+              <li>管理プランのご提案</li>
+              <li>管理委託契約の締結</li>
+              <li>入居者募集開始</li>
+              <li>管理業務スタート</li>
+            </ul>
+          </div>
+          <div class="service-section">
+            <h4>料金について</h4>
+            <div class="price-tag">
+              <p class="price">管理手数料：月額賃料の5%</p>
+              <p class="note">※最低管理料：月額3,000円（税別）</p>
+              <p class="note">※入居者募集時は別途広告料</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- リノベーション提案 -->
+    <article class="service-card">
+      <div class="service-card-header">
+        <div class="service-icon">🔧</div>
+        <div>
+          <h3>リノベーション提案</h3>
+          <p>価値を高めるリフォーム提案</p>
+        </div>
+      </div>
+      <div class="service-card-body">
+        <div class="service-description">
+          <p>
+            中古物件の魅力を最大限に引き出すリノベーション提案を行います。
+            ご購入前の物件へのリフォームプラン提案から、お住まいの物件の価値向上リフォーム、
+            賃貸物件の空室対策リノベーションまで幅広く対応。地元の信頼できる施工業者と連携し、
+            コストパフォーマンスの高いリフォームを実現します。
+          </p>
+        </div>
+        <div class="service-grid">
+          <div class="service-section">
+            <h4>サービスの特徴</h4>
+            <ul>
+              <li>物件価値を高める提案力</li>
+              <li>予算に応じた最適プラン</li>
+              <li>信頼の地元施工業者と連携</li>
+              <li>デザイン〜施工まで一括対応</li>
+              <li>補助金・助成金の活用提案</li>
+            </ul>
+          </div>
+          <div class="service-section">
+            <h4>ご利用の流れ</h4>
+            <ul class="flow-list">
+              <li>現地調査・ヒアリング</li>
+              <li>プラン作成・お見積り</li>
+              <li>ご契約・着工</li>
+              <li>工事完了・お引き渡し</li>
+              <li>アフターメンテナンス</li>
+            </ul>
+          </div>
+          <div class="service-section">
+            <h4>料金について</h4>
+            <div class="price-tag">
+              <p class="price">工事内容により個別見積り</p>
+              <p class="note">※ご相談・お見積りは無料</p>
+              <p class="note">※小規模修繕から大規模改修まで対応</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-title">
+      <h2>よくあるご質問</h2>
+      <p>お客様からよくいただくご質問にお答えします</p>
+    </div>
+    <div class="faq-container">
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>不動産売却の査定は本当に無料ですか？どのくらい時間がかかりますか？</span>
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            はい、査定は完全無料です。机上査定であれば当日〜翌日、現地での詳細査定の場合でも3日程度でお出しいたします。
+            ご売却を決めていない段階でも、資産価値の確認としてお気軽にご依頼ください。
+            査定後に無理な営業をすることはございませんのでご安心ください。
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>住宅ローンが残っている状態でも売却できますか？</span>
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            はい、住宅ローンが残っていても売却は可能です。売却代金でローンを完済し、
+            抵当権を抹消する形で進めます。万が一、売却価格がローン残高を下回る場合も、
+            自己資金での補填や住み替えローンのご相談など、状況に応じた解決策をご提案いたします。
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>賃貸管理を依頼した場合、どのような報告を受けられますか？</span>
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            毎月の収支報告書をお送りするほか、入退去の状況や修繕対応の内容を随時ご報告いたします。
+            また、年に1回は物件の定期診断レポートを作成し、長期修繕計画のご提案も行います。
+            オーナー様専用のポータルサイトで、いつでも収支状況をご確認いただけます。
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>リノベーション工事中は仮住まいが必要ですか？</span>
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            工事の規模や内容によります。キッチンや浴室など水回りの大規模リノベーションの場合は、
+            1〜2週間程度の仮住まいをお勧めするケースもございます。
+            一方、部分的なリフォームや内装変更であれば、住みながらの工事

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせ | 株式会社サンプル商事</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #2C5F8A;
+      --color-secondary: #F0A500;
+      --color-accent: #E8F4FD;
+      --color-text: #333333;
+      --color-text-light: #666666;
+      --color-white: #ffffff;
+      --color-gray-light: #f5f5f5;
+      --color-border: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      line-height: 1.8;
+      color: var(--color-text);
+      background-color: var(--color-white);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ナビゲーション */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background-color: var(--color-white);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      font-weight: 500;
+      color: var(--color-text);
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--color-primary);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--color-secondary);
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+    }
+
+    .menu-toggle span {
+      width: 25px;
+      height: 3px;
+      background-color: var(--color-primary);
+      transition: 0.3s;
+    }
+
+    /* ページヘッダー */
+    .page-header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #1e4a6d 100%);
+      padding: 4rem 5%;
+      text-align: center;
+      color: var(--color-white);
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .page-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .breadcrumb {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    /* セクション共通 */
+    section {
+      padding: 5rem 5%;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 1.8rem;
+      color: var(--color-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title p {
+      color: var(--color-text-light);
+    }
+
+    /* 連絡先情報 */
+    .contact-info {
+      background-color: var(--color-accent);
+    }
+
+    .contact-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .contact-card {
+      background-color: var(--color-white);
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .contact-card-icon {
+      width: 60px;
+      height: 60px;
+      background-color: var(--color-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.5rem;
+    }
+
+    .contact-card h3 {
+      color: var(--color-primary);
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .contact-card-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-card-note {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+    }
+
+    /* お問い合わせフォーム */
+    .contact-form-section {
+      background-color: var(--color-white);
+    }
+
+    .form-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: var(--color-white);
+      padding: 3rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+
+    .form-group label .required {
+      background-color: var(--color-secondary);
+      color: var(--color-white);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid var(--color-border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(44, 95, 138, 0.1);
+    }
+
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-group select {
+      cursor: pointer;
+      background-color: var(--color-white);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .privacy-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background-color: var(--color-gray-light);
+      border-radius: 8px;
+    }
+
+    .privacy-check input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 0.2rem;
+      cursor: pointer;
+      accent-color: var(--color-primary);
+    }
+
+    .privacy-check label {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      cursor: pointer;
+    }
+
+    .privacy-check a {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1.25rem 2rem;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #1e4a6d 100%);
+      color: var(--color-white);
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(44, 95, 138, 0.3);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .form-note {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+    }
+
+    /* アクセス情報 */
+    .access-section {
+      background-color: var(--color-gray-light);
+    }
+
+    .access-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .access-details {
+      background-color: var(--color-white);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .access-details h3 {
+      color: var(--color-primary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--color-secondary);
+    }
+
+    .access-item {
+      display: flex;
+      margin-bottom: 1.25rem;
+    }
+
+    .access-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .access-item-label {
+      min-width: 100px;
+      font-weight: 500;
+      color: var(--color-primary);
+    }
+
+    .access-item-value {
+      flex: 1;
+    }
+
+    .map-container {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      height: 100%;
+      min-height: 300px;
+    }
+
+    .map-placeholder {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      background: linear-gradient(135deg, var(--color-accent) 0%, #d0e8f7 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
+
+    .map-placeholder-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    /* フッター */
+    footer {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      padding: 3rem 5% 1.5rem;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-section h4 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      color: var(--color-secondary);
+    }
+
+    .footer-section p {
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--color-white);
+        flex-direction: column;
+        padding: 1rem 5%;
+        gap: 0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-links li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .page-header {
+        padding: 3rem 5%;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+
+      section {
+        padding: 3rem 5%;
+      }
+
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .access-content {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ナビゲーション -->
+  <nav>
+    <div class="nav-logo">株式会社サンプル商事</div>
+    <ul class="nav-links">
+      <li><a href="index.html">ホーム</a></li>
+      <li><a href="about.html">会社情報</a></li>
+      <li><a href="service.html">サービス</a></li>
+      <li><a href="works.html">実績</a></li>
+      <li><a href="contact.html" class="active">お問い合わせ</a></li>
+    </ul>
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+
+  <!-- ページヘッダー -->
+  <header class="page-header">
+    <h1>お問い合わせ</h1>
+    <p>ご質問・ご相談など、お気軽にお問い合わせください</p>
+    <div class="breadcrumb">
+      <a href="index.html">ホーム</a>
+      <span>></span>
+      <span>お問い合わせ</span>
+    </div>
+  </header>
+
+  <!-- 連絡先情報 -->
+  <section class="contact-info">
+    <div class="section-title">
+      <h2>お問い合わせ方法</h2>
+      <p>お電話・メール・フォームからお問い合わせいただけます</p>
+    </div>
+    <div class="contact-cards">
+      <div class="contact-card">
+        <div class="contact-card-icon">📞</div>
+        <h3>お電話でのお問い合わせ</h3>
+        <div class="contact-card-value">096-XXX-XXXX</div>
+        <p class="contact-card-note">営業時間：9:00〜18:00<br>定休日：水曜日</p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon">✉️</div>
+        <h3>メールでのお問い合わせ</h3>
+        <div class="contact-card-value">info@sample-fudosan.co.jp</div>
+        <p class="contact-card-note">24時間受付<br>2営業日以内に返信いたします</p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon">🕐</div>
+        <h3>営業時間</h3>
+        <div class="contact-card-value">9:00〜18:00</div>
+        <p class="contact-card-note">定休日：水曜日<br>※祝日は営業しております</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- お問い合わせフォーム -->
+  <section class="contact-form-section">
+    <div class="section-title">
+      <h2>お問い合わせフォーム</h2>
+      <p>以下のフォームに必要事項をご記入ください</p>
+    </div>
+    <div class="form-container">
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">お名前<span class="required">必須</span></label>
+            <input type="text" id="name" name="name" placeholder="例：山田 太郎" required>
+          </div>
+          <div class="form-group">
+            <label for="kana">フリガナ</label>
+            <input type="text" id="kana" name="kana" placeholder="例：ヤマダ タロウ">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">メールアドレス<span class="required">必須</span></label>
+            <input type="email" id="email" name="email" placeholder="例：example@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">電話番号<span class="required">必須</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="例：090-1234-5678" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inquiry-type">お問い合わせ種別<span class="required">必須</span></label>
+          <select id="inquiry-type" name="inquiry-type" required>
+            <option value="">選択してください</option>
+            <option value="buy">物件購入について</option>
+            <option value="sell">物件売却について</option>
+            <option value="rent">賃貸物件について</option>
+            <option value="consult">不動産コンサルティング</option>
+            <option value="estimate">無料���定のご依頼</option>
+            <option value="other">その他のお問い合わせ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">お問い合わせ内容<span class="required">必須</span></label>
+          <textarea id="message" name="message" placeholder="ご質問やご相談内容をご記入ください" required></textarea>
+        </div>
+        <div class="privacy-check">
+          <input type="checkbox" id="privacy" name="privacy" required>
+          <label for="privacy">
+            <a href="#">プライバシーポリシー</a>に同意の上、送信してください。
+            お預かりした個人情報は、お問い合わせへの回答以外の目的には使用いたしません。
+          </label>
+        </div>
+        <button type="submit" class="submit-btn">この内容で送信する</button>
+        <p class="form-note">※2営業日以内にご連絡いたします。<br>お急ぎの場合はお電話でお問い合わせください。</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- アクセス情報 -->
+  <section class="access-section">
+    <div class="section-title">
+      <h2>アクセス</h2>
+      <p>ご来店の際はお気軽にお越しください</p>
+    </div>
+    <div class="access-content">
+      <div class="access-details">
+        <h3>株式会社サンプル商事</h3>
+        <div class="access-item">
+          <span class="access-item-label">所在地</span>
+          <span class="access-item-value">〒860-0000<br>熊本県熊本市中央区○○町1-2-3</span>
+        </div>
+        <div class="access-item">
+          <span class="access-item-label">電話番号</span>
+          <span class="access-item-value">096-XXX-XXXX</span>
+        </div>
+        <div class="access-item">
+          <span class="access-item-label">メール</span>
+          <span class="access-item-value">info@sample-fudosan.co.jp</span>
+        </div>
+        <div class="access-item">
+          <span class="access-item-label">営業時間</span>
+          <span class="access-item-value">9:00〜18:00</span>
+        </div>
+        <div class="access-item">
+          <span class="access-item-label">定休日</span>
+          <span class="access-item-value">水曜日</span>
+        </div>
+        <div class="access-item">
+          <span class="access-item-label">アクセス</span>
+          <span class="access-item-value">熊本市電「○○駅」より徒歩5分<br>駐車場3台完備</span>
+        </div>
+      </div>
+      <div class="map-container">
+        <div class="map-placeholder">
+          <div class="map-placeholder-icon">📍</div>
+          <p>Google Map</p>
+          <p style="font-size: 0.9rem; opacity: 0.7;">熊本県熊本市中央区</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>株式会社サンプル商事</h4>
+        <p>地域密着型の不動産コンサルティング</p>
+        <p style="margin-top: 1rem;">〒860-0000<br>熊本県熊本市中央区○○町1-2-3</p>
+      </div>
+      <div class="footer-section">
+        <h4>お問い合わせ</h4>
+        <p>📞 096-XXX-XXXX</p>
+        <p>✉️ info@sample-fudosan.co.jp</p>
+        <p>営業時間：9:00〜18:00</p>
+        <p>定休日：水曜日</p>
+      </div>
+      <div class="footer-section">
+        <h4>サイトマップ</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">ホーム</a></li>
+          <li><a href="about.html">会社情報</a></li>
+          <li><a href="service.html">サービス</a></li>
+          <li><a href="works.html">実績</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 株式会社サンプル商事 All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,920 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>株式会社サンプル商事 | 熊本の不動産コンサルティング</title>
+    <meta name="description" content="創業20年、熊本県内で500件以上の実績。地域密着型の不動産会社として、マイホーム購入・売却を丁寧にサポートします。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== Reset & Base ========== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2C5F8A;
+            --color-primary-dark: #1e4563;
+            --color-secondary: #F0A500;
+            --color-secondary-light: #ffb81c;
+            --color-accent: #E8F4FD;
+            --color-text: #333333;
+            --color-text-light: #666666;
+            --color-white: #ffffff;
+            --color-gray-light: #f5f5f5;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--color-text);
+            background-color: var(--color-white);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ========== Header & Navigation ========== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: var(--color-white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--color-secondary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-primary);
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--color-primary);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        /* ========== Hero Section ========== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            padding-top: 80px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background-color: var(--color-secondary);
+            color: var(--color-white);
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--color-white);
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .hero-title span {
+            color: var(--color-secondary);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--color-secondary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 35px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--color-secondary);
+            color: var(--color-white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--color-white);
+            border: 2px solid var(--color-white);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--color-white);
+            color: var(--color-primary);
+        }
+
+        /* ========== Section Common ========== */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 15px;
+        }
+
+        .section-desc {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ========== Strengths Section ========== */
+        .strengths {
+            background-color: var(--color-gray-light);
+        }
+
+        .strengths-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .strength-card {
+            background-color: var(--color-white);
+            padding: 40px 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strength-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--color-secondary);
+            transform: scaleY(0);
+            transition: var(--transition);
+        }
+
+        .strength-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .strength-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .strength-icon {
+            width: 70px;
+            height: 70px;
+            background-color: var(--color-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .strength-icon svg {
+            width: 35px;
+            height: 35px;
+            fill: var(--color-primary);
+        }
+
+        .strength-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 15px;
+        }
+
+        .strength-text {
+            font-size: 0.95rem;
+            color: var(--color-text-light);
+        }
+
+        /* ========== Services Section ========== */
+        .services {
+            background-color: var(--color-white);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .service-card {
+            background-color: var(--color-accent);
+            border-radius: 10px;
+            padding: 30px;
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            background-color: var(--color-primary);
+        }
+
+        .service-card:hover .service-title,
+        .service-card:hover .service-text {
+            color: var(--color-white);
+        }
+
+        .service-card:hover .service-icon svg {
+            fill: var(--color-secondary);
+        }
+
+        .service-icon {
+            margin-bottom: 20px;
+        }
+
+        .service-icon svg {
+            width: 45px;
+            height: 45px;
+            fill: var(--color-primary);
+            transition: var(--transition);
+        }
+
+        .service-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .service-text {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            transition: var(--transition);
+        }
+
+        /* ========== About Section ========== */
+        .about {
+            background-color: var(--color-gray-light);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-image {
+            position: relative;
+        }
+
+        .about-image-main {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .about-badge {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 120px;
+            height: 120px;
+            background-color: var(--color-secondary);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .about-badge-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .about-badge-text {
+            font-size: 0.75rem;
+        }
+
+        .about-text-content h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+        }
+
+        .about-text-content p {
+            color: var(--color-text-light);
+            margin-bottom: 25px;
+        }
+
+        .about-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--color-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--color-primary);
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: var(--color-text-light);
+            font-size: 0.8rem;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        /* ========== CTA Section ========== */
+        .cta {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: clamp(1.5rem, 4vw, 2.25rem);
+            font-weight: 700;
+            color: var(--color-white);
+            margin-bottom: 15px;
+        }
+
+        .cta-text {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cta-phone {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--color-white);
+            margin-top: 30px;
+        }
+
+        .cta-phone svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--color-secondary);
+        }
+
+        .cta-phone-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .cta-phone-note {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* ========== Footer ========== */
+        footer {
+            background-color: #1a1a1a;
+            color: var(--color-white);
+            padding: 60px 0 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-brand h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--color-white);
+        }
+
+        .footer-brand p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .footer-contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-contact-item svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--color-secondary);
+            flex-shrink: 0;
+        }
+
+        .footer-nav h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--color-white);
+        }
+
+        .footer-nav ul {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-nav a {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-nav a:hover {
+            color: var(--color-secondary);
+        }
+
+        .footer-bottom {
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .footer-copyright {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 1024px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .about-image {
+                order: 2;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: var(--color-white);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                box-shadow: var(--shadow-md);
+                transform: translateY(-150%);
+                transition: var(--transition);
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+            }
+
+            .nav-links li {
+                border-bottom: 1px solid var(--color-gray-light);
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 15px 0;
+            }
+
+            .hero-stats {
+                gap: 20px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .about-badge {
+                right: 10px;
+                bottom: -10px;
+                width: 100px;
+                height: 100px;
+            }
+
+            .about-badge-number {
+                font-size: 2rem;
+            }
+
+            .about-info {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-contact-info {
+                align-items: center;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .strengths-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="nav-logo">株式会社サンプル商事</div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">ホーム</a></li>
+                <li><a href="about.html">会社情報</a></li>
+                <li><a href="service.html">サービス</a></li>
+                <li><a href="works.html">実績</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">創業20年の信頼と実績</span>
+                <h1 class="hero-title">
+                    あなたの「理想の暮らし」を<br>
+                    <span>熊本</span>から叶える。
+                </h1>
+                <p class="hero-subtitle">
+                    地域に根ざした情報力と丁寧なヒアリングで、
+                    マイホーム購入から売却まで、住まいの全てをサポートします。
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500<small>件</small>+</div>
+                        <div class="stat-label">取引実績</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">20<small>年</small></div>
+                        <div class="stat-label">業界経験</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">12<small>名</small></div>
+                        <div class="stat-label">専門スタッフ</div>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="contact.html" class="btn btn-primary">無料相談を予約する</a>
+                    <a href="service.html" class="btn btn-outline">サービスを見る</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strengths Section -->
+    <section class="strengths" id="strengths">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Our Strengths</span>
+                <h2 class="section-title">選ばれる3つの理由</h2>
+                <p class="section-desc">
+                    お客様に寄り添い、理想の住まい探しを全力でサポー���します
+                </p>
+            </div>
+            <div class="strengths-grid">
+                <div class="strength-card">
+                    <div class="strength-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="strength-title">創業20年の実績と地域への深い理解</h3>
+                    <p class="strength-text">
+                        熊本県内で500件以上の取引実績。地域の特性を熟知したスタッフが、
+                        エリアごとの住環境や将来性まで丁寧にご説明します。
+                    </p>
+                </div>
+                <div class="strength-card">
+                    <div class="strength-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="strength-title">売買から賃貸まで全てワンストップ対応</h3>
+                    <p class="strength-text">
+                        物件探しから契約、ローン相談、リフォームまで一貫してサポート。
+                        複数の窓口に相談する手間がなく、スムーズにお取引いただけます。
+                    </p>
+                </div>
+                <div class="strength-card">
+                    <div class="strength-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="strength-title">専任担当者による丁寧なアフターフォロー</h3>
+                    <p class="strength-text">
+                        ご契約後も専任担当者がしっかりサポート。入居後のお困りごとや
+                        将来の住み替え相談まで、末永くお付き合いいたします。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Services</span>
+                <h2 class="section-title">サービス内容</h2>
+                <p class="section-desc">
+                    住まいに関するあ

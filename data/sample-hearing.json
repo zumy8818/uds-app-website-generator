@@ -1,0 +1,51 @@
+{
+  "company": {
+    "name": "株式会社サンプル商事",
+    "tagline": "地域密着型の不動産コンサルティング",
+    "description": "創業20年、熊本県内で500件以上の売買・賃貸を手がけてきた不動産会社。お客様の「理想の暮らし」を実現するため、丁寧なヒアリングと地域に根ざした情報力が強み。",
+    "founding_year": 2004,
+    "employees": 12,
+    "location": "熊本県熊本市中央区"
+  },
+  "brand": {
+    "color_primary": "#2C5F8A",
+    "color_secondary": "#F0A500",
+    "color_accent": "#E8F4FD",
+    "font_style": "modern",
+    "site_style": "professional",
+    "keywords": ["信頼", "地域密着", "丁寧", "実績"]
+  },
+  "services": [
+    {
+      "name": "売買仲介",
+      "description": "物件探しから契約まで一貫サポート",
+      "icon": "🏠"
+    },
+    {
+      "name": "賃貸管理",
+      "description": "オーナー様の資産を大切に管理",
+      "icon": "🔑"
+    },
+    {
+      "name": "リノベーション提案",
+      "description": "価値を高めるリフォーム提案",
+      "icon": "🏗️"
+    }
+  ],
+  "strengths": [
+    "創業20年の実績と地域への深い理解",
+    "売買から賃貸まで全てワンストップ対応",
+    "専任担当者による丁寧なアフターフォロー"
+  ],
+  "target_customers": "熊本県内でマイホーム購入・売却を検討している30〜50代のファミリー層",
+  "contact": {
+    "phone": "096-XXX-XXXX",
+    "email": "info@sample-fudosan.co.jp",
+    "hours": "9:00〜18:00（定休日：水曜日）"
+  },
+  "cta_message": "まずはお気軽にご相談ください",
+  "meta": {
+    "generated_at": "2026-04-04",
+    "hearing_version": "1.0"
+  }
+}
