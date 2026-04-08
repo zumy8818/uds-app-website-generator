@@ -1,0 +1,17 @@
+# 環境変数・機密情報
+.env
+.env.*
+
+# 依存関係
+node_modules/
+
+# 生成された出力ファイル
+output/
+
+# OS生成ファイル
+Thumbs.db
+.DS_Store
+
+# エディタ
+.vscode/
+*.swp
