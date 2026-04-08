@@ -2,6 +2,9 @@
 .env
 .env.*
 
+# 本番用（認証情報入り）ファイル - GitHubに上げない
+*-prod.php
+
 # 依存関係
 node_modules/
 
