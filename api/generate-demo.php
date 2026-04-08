@@ -3,70 +3,68 @@
  * generate-demo.php
  * ヒアリングデータからデモ用トップページを自動生成するAPI
  *
- * リクエスト: POST /api/generate-demo.php
- * パラメータ: hearing_id (int)
+ * 【単体呼び出し】POST /api/generate-demo.php  hearing_id=1
+ * 【include呼び出し】save-hearing.php から require_once で使用
  * レスポンス: JSON { success, url, company_name, error }
  */
 
 // ─────────────────────────────────────────────
-// 定数
+// 定数（二重定義防止）
 // ─────────────────────────────────────────────
-define('DB_HOST',          'mysql320.phy.lolipop.lan');
-define('DB_NAME',          'LAA1380072-udswebgen');
-define('DB_USER',          'LAA1380072');
-define('DB_PASS',          '');  // 要設定
+defined('DB_HOST')          || define('DB_HOST',          'mysql320.phy.lolipop.lan');
+defined('DB_NAME')          || define('DB_NAME',          'LAA1380072-udswebgen');
+defined('DB_USER')          || define('DB_USER',          'LAA1380072');
+defined('DB_PASS')          || define('DB_PASS',          '');  // 要設定
 
-define('ANTHROPIC_API_KEY', '');  // 要設定
-define('CLAUDE_MODEL',      'claude-sonnet-4-5');
-define('CLAUDE_MAX_TOKENS', 8000);
+defined('ANTHROPIC_API_KEY') || define('ANTHROPIC_API_KEY', '');  // 要設定
+defined('CLAUDE_MODEL')      || define('CLAUDE_MODEL',      'claude-sonnet-4-5');
+defined('CLAUDE_MAX_TOKENS') || define('CLAUDE_MAX_TOKENS', 8000);
 
-define('NOTIFY_EMAIL',     'zumy8818@gmail.com');
-define('DEMO_BASE_PATH',   '/home/hippy.jp-scarecrowman8818/ubuyama-digital-service.com/demo');
-define('DEMO_BASE_URL',    'https://ubuyama-digital-service.com/demo');
+defined('NOTIFY_EMAIL')     || define('NOTIFY_EMAIL',     'zumy8818@gmail.com');
+defined('DEMO_BASE_PATH')   || define('DEMO_BASE_PATH',   '/home/hippy.jp-scarecrowman8818/ubuyama-digital-service.com/demo');
+defined('DEMO_BASE_URL')    || define('DEMO_BASE_URL',    'https://ubuyama-digital-service.com/demo');
 
 // ─────────────────────────────────────────────
-// メイン処理
+// 単体呼び出し時のみ直接実行
 // ─────────────────────────────────────────────
-header('Content-Type: application/json; charset=utf-8');
-
-try {
-    // 1. POSTパラメータの検証
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('POSTリクエストのみ受け付けます', 405);
+if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    try {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            throw new Exception('POSTリクエストのみ受け付けます', 405);
+        }
+        $hearing_id = filter_input(INPUT_POST, 'hearing_id', FILTER_VALIDATE_INT);
+        if (!$hearing_id || $hearing_id <= 0) {
+            throw new Exception('hearing_id が不正です', 400);
+        }
+        $result = runGenerateDemo($hearing_id);
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    } catch (Exception $e) {
+        $status = $e->getCode() >= 400 ? $e->getCode() : 500;
+        http_response_code($status);
+        echo json_encode([
+            'success' => false,
+            'error'   => $e->getMessage(),
+        ], JSON_UNESCAPED_UNICODE);
     }
+}
 
-    $hearing_id = filter_input(INPUT_POST, 'hearing_id', FILTER_VALIDATE_INT);
-    if (!$hearing_id || $hearing_id <= 0) {
-        throw new Exception('hearing_id が不正です', 400);
-    }
-
-    // 2. DBからヒアリングデータを取得
+// ─────────────────────────────────────────────
+// メイン関数（include時もここを呼ぶ）
+// ─────────────────────────────────────────────
+function runGenerateDemo(int $hearing_id): array
+{
     $hearing = fetchHearingData($hearing_id);
-
-    // 3. Claude APIでTopページHTML生成
-    $html = generateTopPageHTML($hearing);
-
-    // 4. HTMLファイルを保存
-    $slug = makeSlug($hearing['company_name']);
-    $url  = saveHTML($slug, $html);
-
-    // 5. メール通知
+    $html    = generateTopPageHTML($hearing);
+    $slug    = makeSlug($hearing['company_name']);
+    $url     = saveHTML($slug, $html);
     sendNotification($hearing['company_name'], $url);
 
-    // 6. URLをJSONで返す
-    echo json_encode([
+    return [
         'success'      => true,
         'url'          => $url,
         'company_name' => $hearing['company_name'],
-    ], JSON_UNESCAPED_UNICODE);
-
-} catch (Exception $e) {
-    $status = $e->getCode() >= 400 ? $e->getCode() : 500;
-    http_response_code($status);
-    echo json_encode([
-        'success' => false,
-        'error'   => $e->getMessage(),
-    ], JSON_UNESCAPED_UNICODE);
+    ];
 }
 
 // ─────────────────────────────────────────────
@@ -88,7 +86,6 @@ function fetchHearingData(int $hearing_id): array
         throw new Exception("hearing_id={$hearing_id} のデータが見つかりません", 404);
     }
 
-    // hearing_data カラムにJSONが入っている想定
     $data = json_decode($row['hearing_data'], true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception('ヒアリングデータのJSON解析に失敗しました');
@@ -144,11 +141,9 @@ function generateTopPageHTML(array $data): string
 
     $raw_text = $parsed['content'][0]['text'] ?? '';
 
-    // ```html ... ``` ブロックを抽出
     if (preg_match('/```html\s*([\s\S]*?)```/i', $raw_text, $m)) {
         return trim($m[1]);
     }
-    // <!DOCTYPE html> ... </html> を直接抽出
     if (preg_match('/(<!DOCTYPE[\s\S]*?<\/html>)/i', $raw_text, $m)) {
         return trim($m[1]);
     }
@@ -161,13 +156,9 @@ function generateTopPageHTML(array $data): string
 // ─────────────────────────────────────────────
 function buildPrompt(array $data): string
 {
-    $company  = $data['company']  ?? [];
-    $brand    = $data['brand']    ?? [];
-    $services = $data['services'] ?? [];
-    $strengths = $data['strengths'] ?? [];
+    $brand    = $data['brand'] ?? [];
     $keywords = implode('・', $brand['keywords'] ?? []);
-
-    $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    $json     = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
     return <<<PROMPT
 あなたはプロのWebデザイナーです。
@@ -235,13 +226,10 @@ function saveHTML(string $slug, string $html): string
 // ─────────────────────────────────────────────
 function makeSlug(string $company_name): string
 {
-    // 日本語・記号を除去し、英数字とハイフンのみに正規化
     $slug = preg_replace('/[^\w\-]/u', '-', $company_name);
     $slug = preg_replace('/-+/', '-', $slug);
     $slug = trim($slug, '-');
     $slug = strtolower($slug);
-
-    // 空になった場合はタイムスタンプで代替
     return $slug ?: 'company-' . time();
 }
 
