@@ -40,8 +40,6 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
         $result = runGenerateDemo($hearing_id);
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
     } catch (Exception $e) {
-        $status = $e->getCode() >= 400 ? $e->getCode() : 500;
-        http_response_code($status);
         $code   = is_numeric($e->getCode()) ? (int)$e->getCode() : 0;
         $status = ($code >= 400 && $code < 600) ? $code : 500;
         http_response_code($status);
@@ -89,7 +87,7 @@ function fetchHearingData(int $hearing_id): array
         throw new Exception("hearing_id={$hearing_id} のデータが見つかりません", 404);
     }
 
-    $data = json_decode($row['hearing_data'], true);
+    $data = json_decode($row['hearing_json'], true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception('ヒアリングデータのJSON解析に失敗しました');
     }

@@ -90,10 +90,13 @@ function saveHearing(string $hearing_data_json): int
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 
+    $parsed      = json_decode($hearing_data_json, true);
+    $client_name = $parsed['company']['name'] ?? '';
+
     $stmt = $pdo->prepare(
-        'INSERT INTO hearing_data (hearing_data, created_at) VALUES (?, NOW())'
+        'INSERT INTO hearing_data (client_name, hearing_json) VALUES (?, ?)'
     );
-    $stmt->execute([$hearing_data_json]);
+    $stmt->execute([$client_name, $hearing_data_json]);
 
     return (int) $pdo->lastInsertId();
 }
