@@ -157,9 +157,12 @@ function generateTopPageHTML(array $data): string
 // ─────────────────────────────────────────────
 function buildPrompt(array $data): string
 {
-    $brand    = $data['brand'] ?? [];
-    $keywords = implode('・', $brand['keywords'] ?? []);
-    $json     = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    $brand           = $data['brand'] ?? [];
+    $keywords        = implode('・', $brand['keywords'] ?? []);
+    $color_primary   = $brand['color_primary']   ?? '';
+    $color_secondary = $brand['color_secondary'] ?? '';
+    $site_style      = $brand['site_style']      ?? '';
+    $json            = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
     return <<<PROMPT
 あなたはプロのWebデザイナーです。
@@ -173,9 +176,9 @@ function buildPrompt(array $data): string
 ### デザイン要件
 - モダンで洗練されたデザイン（2024年のトレンドを意識）
 - スマートフォン対応（レスポンシブデザイン）
-- プライマリカラー: {$brand['color_primary']}
-- セカンダリカラー: {$brand['color_secondary']}
-- サイトスタイル: {$brand['site_style']}
+- プライマリカラー: {$color_primary}
+- セカンダリカラー: {$color_secondary}
+- サイトスタイル: {$site_style}
 
 ### 構成セクション（この順番で）
 1. ヘッダー - ロゴ（社名テキスト）、ナビゲーション
